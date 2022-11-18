@@ -4,10 +4,11 @@ from os.path import isfile, join, exists, isdir
 from werkzeug.utils import secure_filename
 from settings import HOST, PORT, ENVIRONMENT_DEBUG, SPARK_DISTRIBUTED_FILE_SYSTEM, NAME_OF_CLUSTER
 from flask_cors import CORS, cross_origin
-from utils import get_data_from_file, allowed_file, delete_file
+from utils import get_data_from_file, allowed_file, delete_file, choose_file
 
 app = Flask(__name__)
 CORS(app)
+
 
 @app.route("/", methods=["GET"])
 @cross_origin()
@@ -76,13 +77,12 @@ def get(directory):
         app.logger.warning(f"directory '{directory}' not found")
         return app.response_class(
             status=400,
-            response=json.dumps({'message': 'Wrong directory specified. Choose joined_data/pretransformed_data/matched_data'}),
+            response=json.dumps(
+                {'message': 'Wrong directory specified. Choose joined_data/pretransformed_data/matched_data'}),
         )
 
     file = request.args.get('file')
     path = join(SPARK_DISTRIBUTED_FILE_SYSTEM, directory, file)
-    app.logger.info(isdir(path))
-    app.logger.info(isfile(path))
 
     if file is None:
         return app.response_class(
@@ -97,7 +97,9 @@ def get(directory):
         )
 
     if request.method == 'GET':
-        return send_file(filename_or_fp=path, as_attachment=True)
+        new_path = choose_file(path=path)
+        return send_file(filename_or_fp=str(new_path),
+                         as_attachment=True)
 
     if request.method == 'DELETE':
         delete_file(path=path)
@@ -105,7 +107,6 @@ def get(directory):
             status=200,
             response=json.dumps({'message': 'File has been deleted.'})
         )
-
 
 
 @app.route("/upload-file", methods=['GET', 'POST'])
