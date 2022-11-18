@@ -20,6 +20,7 @@ def get_data_from_file(directory: str, filename) -> dict:
     result_dict['columns'] = columns
     return result_dict
 
+
 def delete_file(path):
     if isdir(path):
         for file_name in listdir(path):
@@ -33,3 +34,10 @@ def delete_file(path):
     elif isfile(path):
         remove(path)
 
+
+def choose_file(path):
+    if isdir(path):
+        return [join(path, file_name) for file_name in listdir(path)][0]
+
+    if isfile(path):
+        return path
