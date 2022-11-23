@@ -15,7 +15,9 @@ RUN mkdir -p -v /opt/workspace/input
 RUN mkdir -p -v /opt/workspace/joined_data
 RUN mkdir -p -v /opt/workspace/matched_data
 RUN mkdir -p -v /opt/workspace/pretransformed_data
+RUN mkdir -p -v /opt/workspace/error_data
 
+COPY ./infrastructures/hdfs/static_files /opt/workspace/error_data/static_files
 
 #Finally, in order our container to run the python
 #code we do it with final command
