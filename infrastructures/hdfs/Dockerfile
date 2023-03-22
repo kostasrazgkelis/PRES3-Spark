@@ -1,6 +1,6 @@
 #Defines the image of which the container
 #is going to be based
-FROM python:3.9
+FROM python:3.8
 
 
 COPY ./infrastructures/hdfs/requirements.txt /requirements.txt
